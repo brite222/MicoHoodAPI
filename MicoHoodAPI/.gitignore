@@ -1,0 +1,39 @@
+﻿## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+
+## Environment  Secrets
+appsettings.Development.json
+appsettings.Production.json
+.env
+*.env
+
+## Published output
+publish/
+out/
+
+## Rider  VS Code
+.idea/
+.vscode/
+*.DotSettings
+
+## OS
+.DS_Store
+Thumbs.db
+
+## EF Migrations temp
+*.db
+*.db-shm
+*.db-wal
+
+## NuGet
+*.nupkg
+.nuget/
+
+## Logs
+logs/
+*.log

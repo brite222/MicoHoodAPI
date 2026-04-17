@@ -1,0 +1,6 @@
+@MicoHoodAPI_HostAddress = http://localhost:5165
+
+GET {{MicoHoodAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
