@@ -1,8 +1,9 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["MicoHood.API.csproj", "."]
-RUN dotnet restore
+COPY ["MicoHoodAPI/MicoHood.API.csproj", "MicoHoodAPI/"]
+RUN dotnet restore "MicoHoodAPI/MicoHood.API.csproj"
 COPY . .
+WORKDIR /src/MicoHoodAPI
 RUN dotnet publish -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
