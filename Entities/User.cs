@@ -1,4 +1,4 @@
-namespace MicoHoodApi.Entities;
+﻿namespace MicoHood.API.Entities;
 
 public class User
 {

@@ -1,8 +1,7 @@
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
-using MicoHoodApi.DTOs;
 
-namespace MicoHoodApi.Middleware;
+namespace MicoHood.API.Middleware;
 
 public class ExceptionMiddleware
 {
@@ -21,14 +20,19 @@ public class ExceptionMiddleware
         {
             await _next(context);
         }
+        catch (KeyNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Resource not found");
+            await WriteErrorResponse(context, HttpStatusCode.NotFound, ex.Message);
+        }
         catch (UnauthorizedAccessException ex)
         {
-            _logger.LogWarning(ex, "Unauthorized access attempt");
+            _logger.LogWarning(ex, "Unauthorized access");
             await WriteErrorResponse(context, HttpStatusCode.Unauthorized, ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception: {Message}", ex.Message);
+            _logger.LogError(ex, "An unexpected error occurred");
             await WriteErrorResponse(context, HttpStatusCode.InternalServerError,
                 "An unexpected error occurred. Please try again later.");
         }
@@ -40,12 +44,12 @@ public class ExceptionMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
-        var response = ApiResponse<object>.Fail(message);
-        var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+        var response = JsonSerializer.Serialize(new
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            statusCode = (int)statusCode,
+            message
         });
 
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsync(response);
     }
 }

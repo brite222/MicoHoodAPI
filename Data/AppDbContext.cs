@@ -1,7 +1,7 @@
-using Microsoft.EntityFrameworkCore;
-using MicoHoodApi.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MicoHood.API.Entities;
 
-namespace MicoHoodApi.Data;
+namespace MicoHood.API.Data;
 
 public class AppDbContext : DbContext
 {
@@ -21,33 +21,29 @@ public class AppDbContext : DbContext
             e.HasKey(u => u.Id);
             e.HasIndex(u => u.Email).IsUnique();
             e.HasIndex(u => u.Username).IsUnique();
-            e.Property(u => u.Email).IsRequired().HasMaxLength(256);
-            e.Property(u => u.Username).IsRequired().HasMaxLength(100);
-            e.Property(u => u.PasswordHash).IsRequired();
         });
 
-        // Post
+       
         modelBuilder.Entity<Post>(e =>
         {
             e.HasKey(p => p.Id);
-            e.Property(p => p.Title).IsRequired().HasMaxLength(200);
-            e.Property(p => p.Content).IsRequired();
-            e.Property(p => p.Location).IsRequired().HasMaxLength(100);
             e.HasOne(p => p.User)
              .WithMany(u => u.Posts)
              .HasForeignKey(p => p.UserId)
              .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // PostLike - unique constraint: a user can only like a post once
+      
         modelBuilder.Entity<PostLike>(e =>
         {
             e.HasKey(pl => pl.Id);
             e.HasIndex(pl => new { pl.PostId, pl.UserId }).IsUnique();
+
             e.HasOne(pl => pl.Post)
              .WithMany(p => p.Likes)
              .HasForeignKey(pl => pl.PostId)
              .OnDelete(DeleteBehavior.Cascade);
+
             e.HasOne(pl => pl.User)
              .WithMany(u => u.Likes)
              .HasForeignKey(pl => pl.UserId)

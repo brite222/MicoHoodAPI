@@ -1,52 +1,82 @@
-using Microsoft.AspNetCore.Mvc;
-using MicoHoodApi.DTOs;
-using MicoHoodApi.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using MicoHood.API.DTOs.Auth;
+using MicoHood.API.Entities;
+using MicoHood.API.Interfaces;
 
-namespace MicoHoodApi.Controllers;
+namespace MicoHood.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
 [Produces("application/json")]
 public class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
+    private readonly IAuthRepository _authRepo;
+    private readonly IJwtService _jwtService;
 
-    public AuthController(IAuthService authService)
+    public AuthController(IAuthRepository authRepo, IJwtService jwtService)
     {
-        _authService = authService;
+        _authRepo = authRepo;
+        _jwtService = jwtService;
     }
 
-    /// <summary>Register a new user</summary>
+  
     [HttpPost("register")]
-    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status400BadRequest)]
+    [EnableRateLimiting("auth")]
+    [ProducesResponseType(typeof(RegisterResponseDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _authService.RegisterAsync(dto);
+        if (await _authRepo.EmailExistsAsync(dto.Email))
+            return Conflict(new { message = "Email already in use" });
 
-        if (!result.Success)
-            return BadRequest(result);
+        if (await _authRepo.UsernameExistsAsync(dto.Username))
+            return Conflict(new { message = "Username already taken" });
 
-        return CreatedAtAction(nameof(Register), result);
+        var user = new User
+        {
+            Username = dto.Username.ToLower(),
+            Email = dto.Email.ToLower(),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+        };
+
+        await _authRepo.CreateUserAsync(user);
+
+        return StatusCode(201, new RegisterResponseDto
+        {
+            Username = user.Username,
+            Email = user.Email
+        });
     }
 
-    /// <summary>Login and receive a JWT token</summary>
+ 
     [HttpPost("login")]
-    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status401Unauthorized)]
+    [EnableRateLimiting("auth")]
+    [ProducesResponseType(typeof(AuthResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _authService.LoginAsync(dto);
+        var user = await _authRepo.GetByEmailAsync(dto.Email);
 
-        if (!result.Success)
-            return Unauthorized(result);
+        if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            return Unauthorized(new { message = "Invalid email or password" });
 
-        return Ok(result);
+        var token = _jwtService.GenerateToken(user);
+
+        return Ok(new AuthResponseDto
+        {
+            Token = token,
+            Username = user.Username,
+            Email = user.Email,
+            ExpiresAt = _jwtService.GetExpiry()
+        });
     }
 }
