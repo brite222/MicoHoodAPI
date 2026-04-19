@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicoHoodAPI", "MicoHoodAPI.csproj", "{C5196D34-7F20-450D-BC64-CB759F2C34AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicoHoodAPI.Tests", "..\MicoHoodAPI.Tests\MicoHoodAPI.Tests.csproj", "{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{C5196D34-7F20-450D-BC64-CB759F2C34AA}.Release|x64.Build.0 = Release|Any CPU
 		{C5196D34-7F20-450D-BC64-CB759F2C34AA}.Release|x86.ActiveCfg = Release|Any CPU
 		{C5196D34-7F20-450D-BC64-CB759F2C34AA}.Release|x86.Build.0 = Release|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Debug|x64.Build.0 = Debug|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Debug|x86.Build.0 = Debug|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Release|x64.ActiveCfg = Release|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Release|x64.Build.0 = Release|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Release|x86.ActiveCfg = Release|Any CPU
+		{BF74E877-DDCD-4AB5-99C0-A2F49C73C056}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
