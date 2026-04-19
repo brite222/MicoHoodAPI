@@ -1,13 +1,13 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["MicoHoodAPI.csproj", "."]
-RUN dotnet restore "MicoHoodAPI.csproj"
+COPY ["MicoHoodApi.csproj", "."]
+RUN dotnet restore "MicoHoodApi.csproj"
 COPY . .
-RUN dotnet publish "MicoHoodAPI.csproj" -c Release -o /app/publish
+RUN dotnet publish "MicoHoodApi.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
-ENTRYPOINT ["dotnet", "MicoHoodAPI.dll"]
+ENTRYPOINT ["dotnet", "MicoHoodApi.dll"]
