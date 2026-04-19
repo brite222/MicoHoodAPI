@@ -46,10 +46,10 @@ Edit `appsettings.json` and set your local PostgreSQL connection string:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=micohood;Username=postgres;Password=yourpassword"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=micohood;Username=postgres;Password=Bright20@"
   },
   "Jwt": {
-    "Secret": "your-super-secret-key-at-least-32-characters",
+    "Secret": "micohood-super-secret-key-2026-bright-dev!",
     "Issuer": "MicoHoodAPI",
     "Audience": "MicoHoodClient"
   }

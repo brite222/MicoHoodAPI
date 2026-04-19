@@ -8,7 +8,8 @@ using MicoHood.API.Interfaces;
 namespace MicoHood.API.Controllers;
 
 [ApiController]
-[Route("api/posts")]
+[Route("api")]
+[Authorize]
 public class PostsController : ControllerBase
 {
     private readonly IPostRepository _postRepo;
@@ -24,8 +25,8 @@ public class PostsController : ControllerBase
         return Guid.TryParse(claim, out var id) ? id : null;
     }
 
-   
-    [HttpGet]
+    
+    [HttpGet("getallproducts")]
     public async Task<IActionResult> GetAll([FromQuery] PostQueryDto query)
     {
         var userId = GetCurrentUserId();
@@ -33,8 +34,8 @@ public class PostsController : ControllerBase
         return Ok(result);
     }
 
-   
-    [HttpGet("{id:guid}")]
+
+    [HttpGet("getproductbyid/{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var userId = GetCurrentUserId();
@@ -46,8 +47,8 @@ public class PostsController : ControllerBase
         return Ok(post);
     }
 
-    [Authorize]
-    [HttpPost]
+  
+    [HttpPost("createproduct")]
     public async Task<IActionResult> Create([FromBody] CreatePostDto dto)
     {
         var userId = GetCurrentUserId();
@@ -67,15 +68,13 @@ public class PostsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, response);
     }
 
-   
-    [Authorize]
-    [HttpPost("{id:guid}/like")]
+    
+    [HttpPost("updateproductbylikeness/{id:guid}")]
     public async Task<IActionResult> ToggleLike(Guid id)
     {
         var userId = GetCurrentUserId();
         if (userId is null) return Unauthorized();
 
-       
         var post = await _postRepo.GetByIdAsync(id);
         if (post is null)
             return NotFound(new { message = "Post not found" });
@@ -84,9 +83,11 @@ public class PostsController : ControllerBase
 
         return Ok(new
         {
-            liked,
+            action = liked ? "liked" : "unliked",
             likeCount = newCount,
-            message = liked ? "Post liked" : "Post unliked"
+            message = liked
+                ? "You have successfully liked this post"
+                : "You have successfully unliked this post"
         });
     }
 }
